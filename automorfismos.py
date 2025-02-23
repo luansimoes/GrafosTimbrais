@@ -16,6 +16,7 @@ Funções:
 from grafo_timbral import GrafoTimbral
 import networkx as nx
 import pandas as pd
+import os
 
 
 def checar_automorfismo(f, g):
@@ -86,7 +87,7 @@ def buscar_automorfismo_entre_pares(g, u, v, x, y):
                 automorfismo[u] = x
                 automorfismo[v] = y
 
-                if checar_automorfismo(automorfismo, g.graph):
+                if checar_automorfismo(automorfismo, g.grafo):
                     return automorfismo
 
                 i+=1
@@ -161,13 +162,14 @@ def formatar_automorfismos(certificado):
 
     fmt_aut = {}
     for par in certificado:
+        fmt_par = ''.join([str(el) for el in par[0]]) + ' -> ' + ''.join([str(el) for el in par[1]])
         pares = []
         for u in certificado[par]:
             str_u = ''.join([str(el) for el in u])
             str_v = ''.join([str(el) for el in certificado[par][u]])
             pares.append((str_u, str_v))
         ords = sorted(pares)
-        fmt_aut[par] = dict(ords)
+        fmt_aut[fmt_par] = dict(ords)
     return fmt_aut
 
 
@@ -189,12 +191,18 @@ def exportar_automorfismos_para_planilha(certificado, nome_arquivo):
 
 if __name__=='__main__':
 
+    caminho = "automorfismos_encontrados"
+    existe = os.path.exists(caminho)
+
+    if not existe:
+       os.makedirs(caminho)
+
 
     parametros = [(4,3,1), (3,4,1), (2,5,2), (2,7,3)]
 
     for n, k, l in parametros:
         certificado = checar_distancia_transitividade(n, k, l)
-        exportar_automorfismos_para_planilha(certificado, f'automorfismos_{n}_{k}_{l}.csv')
+        exportar_automorfismos_para_planilha(certificado, f'{caminho}/automorfismos_{n}_{k}_{l}.csv')
 
     
 
