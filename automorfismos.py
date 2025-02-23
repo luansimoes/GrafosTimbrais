@@ -50,8 +50,8 @@ def buscar_automorfismo_entre_pares(g, u, v, x, y):
                       e os valores são a imagem dos vértice pelo automorfismo. Retorna False se nenhum automorfismo for encontrado.
     """
 
-    n1 = list(g.vizinhos_em_comum(u,v))
-    n2 = list(g.vizinhos_em_comum(x,y))
+    n1 = list(nx.common_neighbors(g.grafo, u, v))
+    n2 = list(nx.common_neighbors(g.grafo, x, y))
 
     outros1 = [node for node in g.grafo.nodes if (node not in n1 and node not in [u,v])]
     outros2 = [node for node in g.grafo.nodes if (node not in n2 and node not in [x,y])]
