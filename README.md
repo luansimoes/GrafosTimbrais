@@ -4,3 +4,6 @@ Nele, você encontrará scripts para a execução de tarefas de pesquisa, invest
 * Automorfismos
 * Cliques máximas
 * Ciclos hamiltonianos
+
+## Arquivos
+* grafo_timbral.py : Classe base que implementa a estrutura dos grafos timbrais. Inclui método recursivo para obtenção de um ciclo hamiltoniano em grafos timbrais binários, partindo da demonstração indutiva na dissertação.
