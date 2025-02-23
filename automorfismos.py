@@ -1,11 +1,21 @@
+"""
+Este módulo contém funções para verificar automorfismos em grafos timbrais e exportar os resultados para uma planilha CSV.
+
+Classes:
+    Nenhuma
+
+Funções:
+    checar_automorfismo(f, g)
+    buscar_automorfismo_entre_pares(u, v, x, y)
+    computar_distancia(g, u, v)
+    checar_distancia_transitividade(n, k, l)
+    formatar_automorfismos(certificado)
+    exportar_automorfismos_para_planilha(certificado, nome_arquivo)
+"""
+
 from grafo_timbral import GrafoTimbral
 import networkx as nx
-import matplotlib.pyplot as plt
 import pandas as pd
-
-N = 4
-K = 3
-L = 1
 
 
 def checar_automorfismo(f, g):
@@ -26,9 +36,19 @@ def checar_automorfismo(f, g):
 
     return True
 
-def buscar_automorfismo_entre_pares(u, v, x, y):
-
-    g = GrafoTimbral(N, K, L)
+def buscar_automorfismo_entre_pares(g, u, v, x, y):
+    """
+    Busca um automorfismo entre dois pares de vértices em um grafo timbral.
+    Args:
+        g (GrafoTimbral): O grafo timbral no qual o automorfismo será buscado.
+        u (int): Primeiro vértice do primeiro par.
+        v (int): Segundo vértice do primeiro par.
+        x (int): Primeiro vértice do segundo par.
+        y (int): Segundo vértice do segundo par.
+    Retorna:
+        dict or bool: Um dicionário representando o automorfismo encontrado, onde as chaves são os vértices do grafo original
+                      e os valores são a imagem dos vértice pelo automorfismo. Retorna False se nenhum automorfismo for encontrado.
+    """
 
     n1 = list(g.vizinhos_em_comum(u,v))
     n2 = list(g.vizinhos_em_comum(x,y))
@@ -75,6 +95,15 @@ def buscar_automorfismo_entre_pares(u, v, x, y):
 
 
 def computar_distancia(g, u, v):
+    """
+    Computa a distância mais curta entre dois nós em um grafo.
+    Args:
+        g (networkx.Graph): O grafo no qual a distância será calculada.
+        u (Tuple): O vértice de origem.
+        v (Tuple): O vértice de destino.
+    Retorna:
+    int ou str: A distância mais curta entre os nós u e v. Se não houver caminho, retorna 'INF'.
+    """
     try:
         d = nx.shortest_path_length(g, u, v)
     except:
@@ -82,6 +111,17 @@ def computar_distancia(g, u, v):
     return d
 
 def checar_distancia_transitividade(n, k, l):
+    """
+    Verifica se um Grafo Timbral é distância-transitivo.
+    Args:
+        n (int): Número de valores admitidos para cada coordenada.
+        k (int): Comprimento dos vértices.
+        l (int): Índice de coincidência entre vértices adjacentes.
+    Retorna:
+        dict ou bool: Um dicionário contendo os pares de vértices e seus respectivos automorfismos, 
+              caso a distância-transitividade seja verificada. Retorna False se existirem
+              pares de vértices à mesma distância para o qual não há automorfismo.
+    """
 
     g = GrafoTimbral(n, k, l)
 
@@ -97,7 +137,7 @@ def checar_distancia_transitividade(n, k, l):
             d_i = computar_distancia(g.grafo, u, v_vec[i])
             d_j = computar_distancia(g.grafo, u, v_vec[j])
             if d_i == d_j:
-                automorfismo = buscar_automorfismo_entre_pares(u, v_vec[i], u, v_vec[j])
+                automorfismo = buscar_automorfismo_entre_pares(g, u, v_vec[i], u, v_vec[j])
                 if not automorfismo:
                     print(f'Não há automorfismo entre {(u, v_vec[i])} e {(u, v_vec[j])}')
                     return False
@@ -109,31 +149,22 @@ def checar_distancia_transitividade(n, k, l):
     
     return certificado
 
-
-def exportar_arquivo_de_automorfismos(n, k, l, certificado):
-
-    with open(f'automorfismos_{n}_{k}_{l}.txt', 'w') as fl:
-        
-        keys_1 = sorted(isos.keys())
-
-        for k1 in keys_1:
-
-            fl.write(f'\n\n\n*******ISOMORFISMO {k1}*******\n\n')
-
-            keys_2 = sorted(isos[k1].keys())
-
-            for k2 in keys_2:
-
-                fl.write(f'{k2} : {isos[k1][k2]}\n')
-
-
 def formatar_automorfismos(certificado):
+    """
+    Formata os automorfismos de um certificado.
+    Args:
+        certificado (dict): Um dicionário onde as chaves são pares de vértices e os 
+        valores são dicionários de automorfismos.
+    Returns:
+        dict: Um dicionário formatado onde as chaves são pares e os valores são dicionários de automorfismos ordenados.
+    """
+
     fmt_aut = {}
     for par in certificado:
         pares = []
         for u in certificado[par]:
             str_u = ''.join([str(el) for el in u])
-            str_v = ''.join([str(el) for el in isos[certificado][u]])
+            str_v = ''.join([str(el) for el in certificado[par][u]])
             pares.append((str_u, str_v))
         ords = sorted(pares)
         fmt_aut[par] = dict(ords)
@@ -141,6 +172,15 @@ def formatar_automorfismos(certificado):
 
 
 def exportar_automorfismos_para_planilha(certificado, nome_arquivo):
+    """
+    Exporta os automorfismos formatados para uma planilha CSV.
+    Args:
+        certificado (dict): Dicionário contendo os automorfismos a serem exportados.
+        nome_arquivo (str): Caminho e nome do arquivo CSV onde os dados serão salvos.
+    Returns:
+        None
+    """
+
     fmt_aut = formatar_automorfismos(certificado)
     df = pd.DataFrame.from_dict(fmt_aut)
     df.to_csv(nome_arquivo)
@@ -148,6 +188,7 @@ def exportar_automorfismos_para_planilha(certificado, nome_arquivo):
 
 
 if __name__=='__main__':
+
 
     parametros = [(4,3,1), (3,4,1), (2,5,2), (2,7,3)]
 
