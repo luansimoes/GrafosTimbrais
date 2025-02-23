@@ -1,2 +1,6 @@
-# GrafosTimbrais
-Códigos contendo uma implementação de grafos timbrais com o auxílio da biblioteca Networkx, além de scripts para auxiliar minha pesquisa sobre o tema.
+# Grafos Timbrais
+Este repositório foi criado no contexto de minha dissertação "Grafos Timbrais: propriedades estruturais e aplicação musical". 
+Nele, você encontrará scripts para a execução de tarefas de pesquisa, investigando aspectos como:
+* Automorfismos
+* Cliques máximas
+* Ciclos hamiltonianos
